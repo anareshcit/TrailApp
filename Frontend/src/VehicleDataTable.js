@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css"; // Include Bootstrap CSS
+// import "bootstrap/dist/css/bootstrap.min.css"; // Include Bootstrap CSS
 // import { motion } from "framer-motion";
 import "./Car.css"; // import the CSS file
 import "./App.css";
@@ -8,6 +8,9 @@ import "./App.css";
 // import Car_Image from "./car-image.png";
 import POLO from "./polo.png";
 import VENTO from "./vento.png";
+import COELOGO from "./CoELogo.png";
+// import BGSWLogo from "./round_illu.png";
+import BGSWLogo from "./bgsw.png";
 
 const VehicleDataTable = () => {
   // const [isRedLight, setIsRedLight] = useState(true);
@@ -46,6 +49,43 @@ const VehicleDataTable = () => {
   const [vehicleSpeeds, setVehicleSpeeds] = useState({}); // State for vehicle speeds
   const [vehicleLanes, setVehicleLanes] = useState({}); // State for vehicle lanes
   const [updateMessage, setUpdateMessage] = useState(null); // State for update message
+  const [editLane, setEditLane] = useState(null);
+  const [editSpeed, setEditSpeed] = useState(null);
+  const [updatedLane, setUpdatedLane] = useState(null);
+  const [updatedSpeed, setUpdatedSpeed] = useState(null);
+
+  const handleEditLane = (vehicleId) => {
+    setEditLane(vehicleId);
+  };
+
+  const handleEditSpeed = (vehicleId) => {
+    setEditSpeed(vehicleId);
+  };
+
+  const handleUpdateLane = (vehicleId) => {
+    setEditLane(null);
+    setUpdatedLane(vehicleLanes[vehicleId] || selectedVehicle.lane_position);
+    // Call the function to update lane position
+    handleSubmitLane(
+      vehicleId,
+      vehicleLanes[selectedVehicle.id] || selectedVehicle.lane_position
+    );
+  };
+
+  const handleUpdateSpeed = (vehicleId) => {
+    setEditSpeed(null);
+    setUpdatedSpeed(vehicleSpeeds[vehicleId] || selectedVehicle.speed);
+    // Call the function to update speed
+    handleSubmitSpeed(
+      vehicleId,
+      vehicleSpeeds[selectedVehicle.id] || selectedVehicle.speed
+    );
+  };
+
+  const handleCancelEdit = () => {
+    setEditLane(null);
+    setEditSpeed(null);
+  };
 
   const handleUpdateSuccess = () => {
     setUpdateMessage("Update successful!"); // Set success message
@@ -54,6 +94,8 @@ const VehicleDataTable = () => {
 
   const handleVehicleClick = (vehicle) => {
     if (selectedVehicle?.id !== vehicle.id) {
+      setUpdatedLane(null);
+      setUpdatedSpeed(null);
       setSelectedVehicle(vehicle);
     } else {
       setSelectedVehicle(null); // Deselect if clicking the same row again
@@ -65,11 +107,7 @@ const VehicleDataTable = () => {
     setVehicleSpeeds({ ...vehicleSpeeds, [vehicleId]: newSpeed });
   };
 
-  const handleSubmitSpeed = async (vehicleId, currentSpeed, currentLane) => {
-    if (currentSpeed < 0 || currentLane > 10 || currentLane < 0) {
-      return alert("Please enter a valid value(s):", currentSpeed, currentLane);
-    }
-
+  const handleSubmitSpeed = async (vehicleId, currentSpeed) => {
     if (currentSpeed !== undefined) {
       try {
         const response = await axios.post(
@@ -88,6 +126,9 @@ const VehicleDataTable = () => {
         console.error("Error updating speed:", error);
       }
     }
+  };
+
+  const handleSubmitLane = async (vehicleId, currentLane) => {
     if (currentLane !== undefined) {
       try {
         const response = await axios.post(
@@ -124,15 +165,26 @@ const VehicleDataTable = () => {
     backgroundColor: lightColors[currentLight],
     margin: "100px auto",
   };
-  const submitButtonStyle = {
+  const cancelButtonStyle = {
     marginLeft: "10px", // Add some margin to separate the button from the dropdown
     padding: "8px 16px", // Add padding to make the button larger
-    backgroundColor: "#003EFF", // Add a green background color
+    backgroundColor: "#737373", // Add a green background color
     color: "white", // Add white text color
     border: "none", // Remove the default button border
     borderRadius: "4px", // Add rounded corners
     cursor: "pointer", // Add pointer cursor on hover
   };
+
+  const submitSelectedButtonStyle = {
+    marginLeft: "15px", // Add some margin to separate the button from the dropdown
+    padding: "8px 16px", // Add padding to make the button larger
+    backgroundColor: "#4da6ff",
+    color: "white", // Add white text color
+    border: "none", // Remove the default button border
+    borderRadius: "4px", // Add rounded corners
+    cursor: "pointer", // Add pointer cursor on hover
+  };
+
   const dropdownStyle = {
     padding: "8px 16px", // Add padding to make the dropdown larger
     border: "1px solid #4CAF50", // Add border matching button's color
@@ -159,27 +211,6 @@ const VehicleDataTable = () => {
     } catch (error) {
       console.error(error);
     }
-  };
-  const TrafficBlink = () => {
-    useEffect(() => {
-      const intervalId = setInterval(() => {
-        const nextLight = getNextLight();
-        setCurrentLight(nextLight);
-      }, 500); // Change light every 2 seconds
-
-      return () => clearInterval(intervalId); // Cleanup function to clear interval on unmount
-    }, [currentLight]); // Run effect only when currentLight changes
-
-    const getNextLight = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5002/api/traffic-light"
-        );
-        setCurrentLight(response.data.trafficLight);
-      } catch (error) {
-        console.error("Error fetching traffic data:", error);
-      }
-    };
   };
 
   useEffect(() => {
@@ -211,10 +242,24 @@ const VehicleDataTable = () => {
 
   return (
     <div className="dashboard">
+      <img src={BGSWLogo} alt="BGSWLogo" className="bgswlogo" />
+      <img src={COELOGO} alt="COELogo" className="coelogo" />
+
       <div className="section left-top">
         {/* Left Top: Car Cockpit */}
         <div className="container">
-          <h2>Vehicle Data</h2>
+          <h2
+            style={{
+              textAlign: "center",
+              fontSize: "72px",
+              fontWeight: "bolder",
+              color: "#496c40",
+              minWidth: "100px",
+              borderRadius: "4px",
+            }}
+          >
+            Connected Vehicles
+          </h2>
           <table className="table table-striped table-bordered table-hover">
             <thead>
               <tr>
@@ -256,108 +301,141 @@ const VehicleDataTable = () => {
       <div className="section left-bottom">
         {/* Right Top: Traffic Signal Picture */}
         <div className="selected_vehicle">
-          <h2>{selectedVehicle ? selectedVehicle.id.toUpperCase() : ""}</h2>
+          <h2 style={{ textAlign: "left", fontSize: "32px", color: "#496c40" }}>
+            {selectedVehicle ? "Vehicle Details" : ""}
+          </h2>
+          <h2
+            style={{
+              textAlign: "center",
+              fontSize: "64px",
+              color: "#9ACC8B",
+              paddingTop: "50px",
+            }}
+          >
+            {selectedVehicle
+              ? "Vehicle ID: " + selectedVehicle.id.toUpperCase()
+              : ""}
+          </h2>
           <p>
             {selectedVehicle
               ? ""
               : "Please select a vehicle in the above table to view/update the details"}
           </p>
-          <div>
-            {/* Display update message */}
-            {selectedVehicle && (
-              <div>
-                <ul>
-                  {/* <p>
-                    ID = {"\t"} {selectedVehicle.id}
-                  </p> */}
-                  <p>
-                    Lane Position = {"\t"}
-                    {/* {selectedVehicle?.id === vehicle.id ? ( */}
-                    {/* <input
-                      type="number"
-                      value={
-                        vehicleLanes[selectedVehicle.id] ||
-                        selectedVehicle.lane_position
-                      } // Use state or default
-                      onChange={(event) =>
-                        handleLaneChange(event, selectedVehicle.id)
-                      }
-                    /> */}
-                    <select
-                      value={
-                        vehicleLanes[selectedVehicle.id] ||
-                        selectedVehicle.lane_position
-                      } // Use state or default
-                      onChange={(event) =>
-                        handleLaneChange(event, selectedVehicle.id)
-                      }
-                    >
-                      <option value="1">Lane 1</option>
-                      <option value="2">Lane 2</option>
-                    </select>
-                    {/* // ) // : ( // vehicle.lane_position // Use updated lane */}
-                    {/* from state or default // )} */}
-                  </p>
-                  <p>
-                    Speed = {"\t"}
-                    {/* <input
-                      type="number"
-                      value={
-                        vehicleSpeeds[selectedVehicle.id] ||
-                        selectedVehicle.speed
-                      } // Use state or default speed
-                      onChange={(event) =>
-                        handleSpeedChange(event, selectedVehicle.id)
-                      }
-                    /> */}
-                    <select
-                      value={
-                        vehicleSpeeds[selectedVehicle.id] ||
-                        selectedVehicle.speed
-                      } // Use state or default speed
-                      onChange={(event) =>
-                        handleSpeedChange(event, selectedVehicle.id)
-                      }
-                    >
-                      <option value="0">Speed 0</option>
-                      <option value="1">Speed 1</option>
-                      <option value="2">Speed 2</option>
-                    </select>
-                  </p>
-                  <p>
-                    Latitude = {"\t"}
-                    {selectedVehicle.location.latitude}
-                  </p>
-                  <p>Longitude = {selectedVehicle.location.longitude}</p>
-                  {/* Add more list items as needed for your vehicle data */}
-                </ul>
-                <button
-                  style={submitButtonStyle}
-                  onClick={() =>
-                    handleSubmitSpeed(
-                      selectedVehicle.id,
-                      vehicleSpeeds[selectedVehicle.id],
-                      vehicleLanes[selectedVehicle.id]
-                    )
-                  }
-                >
-                  Update
-                </button>{" "}
-                {updateMessage && (
-                  <p className="update-message" style={{ color: "green" }}>
-                    {updateMessage}
-                  </p>
-                )}
-              </div>
-            )}
-            {/* <img
-              src={Traffic_Light}
-              alt="Traffic_Light"
-              style={{ width: "200px", height: "200px" }}
-            /> */}
-          </div>
+          {selectedVehicle && (
+            <div>
+              <table className="table table-striped table-bordered">
+                <tbody>
+                  <tr>
+                    <th style={{ textAlign: "center" }}>Lane Position</th>
+                    {editLane !== selectedVehicle.id ? (
+                      <>
+                        <td>{updatedLane || selectedVehicle.lane_position}</td>
+                        <td>
+                          <span
+                            className="edit-icon"
+                            onClick={() => handleEditLane(selectedVehicle.id)}
+                          >
+                            &#128393;
+                          </span>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td colSpan="2">
+                          <select
+                            className="custom-select"
+                            value={
+                              vehicleLanes[selectedVehicle.id] ||
+                              selectedVehicle.lane_position
+                            } // Use state or default
+                            onChange={(event) =>
+                              handleLaneChange(event, selectedVehicle.id)
+                            }
+                          >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            {/* Add more options as needed */}
+                          </select>
+                        </td>
+                        <td>
+                          <button
+                            style={submitSelectedButtonStyle}
+                            onClick={() => handleUpdateLane(selectedVehicle.id)}
+                          >
+                            Update Lane
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                  <tr>
+                    <th style={{ textAlign: "center" }}>Speed</th>
+                    {editSpeed !== selectedVehicle.id ? (
+                      <>
+                        <td>{updatedSpeed || selectedVehicle.speed}</td>
+                        <td>
+                          <span
+                            className="edit-icon"
+                            onClick={() => handleEditSpeed(selectedVehicle.id)}
+                          >
+                            &#128393;
+                          </span>
+                          {/* <button
+                            onClick={() => handleEditSpeed(selectedVehicle.id)}
+                          >
+                            Edit
+                          </button> */}
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td colSpan="2">
+                          <select
+                            className="custom-select"
+                            value={
+                              vehicleSpeeds[selectedVehicle.id] ||
+                              selectedVehicle.speed
+                            } // Use state or default speed
+                            onChange={(event) =>
+                              handleSpeedChange(event, selectedVehicle.id)
+                            }
+                          >
+                            <option value="Stop">Stop</option>
+                            <option value="Slow">Slow</option>
+                            <option value="Fast">Fast</option>
+                            {/* Add more options as needed */}
+                          </select>
+                        </td>
+                        <td>
+                          <button
+                            style={submitSelectedButtonStyle}
+                            onClick={() =>
+                              handleUpdateSpeed(selectedVehicle.id)
+                            }
+                          >
+                            Update Speed
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                </tbody>
+              </table>
+              {(editLane !== null || editSpeed !== null) && (
+                <button style={cancelButtonStyle} onClick={handleCancelEdit}>
+                  Cancel
+                </button>
+              )}
+              {updateMessage && (
+                <p className="update-message" style={{ color: "green" }}>
+                  {updateMessage}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
+
       <div className="section right-bottom">
         <p> {responseData}</p>
         {selectedVehicle?.id === "polo" ? (

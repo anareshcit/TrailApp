@@ -6,11 +6,39 @@
   /* height: 100vh; */
   /* background-color: beige; */
   /* border-style: solid; */
-   height: auto; 
+  height: auto; 
   background-color: white;
   padding: 20px;
 }
 
+.custom-select {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f7f7f7;
+  color: #333;
+  outline: none;
+  min-width: 100px;
+}
+
+.bgswlogo {
+  position: fixed;
+  top: 0;
+  /* left:80px; */
+  width: 90px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+  z-index: 9999; 
+}
+
+.coelogo {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 150px; /* Adjust width as needed */
+  height: auto; /* Maintain aspect ratio */
+  z-index: 9999; /* Ensure logo appears on top */
+}
 
 .section {
   border: 1px solid #ccc;
