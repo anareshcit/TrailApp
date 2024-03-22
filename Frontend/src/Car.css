@@ -1,0 +1,13 @@
+.car {
+    position: relative;
+    height: 50px;
+    width: 100px;
+    background: red;
+    animation: move 5s linear infinite;
+  }
+  
+  @keyframes move {
+    0% { left: 0; }
+    100% { left: calc(100vw - 100px); }
+  }
+  

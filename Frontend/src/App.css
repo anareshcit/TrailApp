@@ -1,0 +1,118 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  /* gap: 20px; */
+  /* height: 100vh; */
+  /* background-color: beige; */
+  /* border-style: solid; */
+   height: auto; 
+  background-color: white;
+  padding: 20px;
+}
+
+
+.section {
+  border: 1px solid #ccc;
+  padding: 20px;
+  place-content: center;
+}
+
+.left-top {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 1;
+  height: auto;
+}
+
+.left-bottom {
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 1;
+  height: auto;
+  /* place-content: space-evenly; */
+  /* display: flex; */
+}
+
+
+.right-top {
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 1;
+}
+
+.right-bottom {
+  grid-column: 2 / span 1;
+  grid-row: 2 / span 1;
+  height: auto;
+}
+
+tabs-container {
+  display: flex; /* Arrange tabs and content horizontally */
+  width: 100%; /* Take up full width */
+}
+
+.tabs-nav {
+  list-style: none;
+  padding: 0;
+  margin:auto
+}
+
+.tab-content-pane {
+  display: none; /* Hide all content panes by default */
+}
+
+.tab-content-pane.active {
+  display: block; /* Show only the active content pane */
+}
+
+.tabs-container {
+  display: flex;
+  width: 100%; /* Adjust width as needed */
+  border-radius: 5px; /* Add subtle rounded corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Optional subtle shadow */
+  background-color: #f5f5f5; /* Light background for tabs container */
+}
+
+.tabs-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex; /* Arrange tabs horizontally */
+}
+
+.tab {
+  padding: 10px 15px; /* Adjust padding for desired tab size */
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid transparent; /* Remove default border */
+  border-bottom: 1px solid #ddd; /* Add bottom border for separation */
+  border-top-left-radius: 5px; /* Maintain rounded corners for active tab */
+  color: #333; /* Default tab text color */
+  transition: background-color 0.2s ease-in-out; /* Smooth transition on hover */
+}
+
+.tab:hover {
+  background-color: #eee; /* Highlight on hover */
+}
+
+.tab.active {
+  background-color: #007bff; /* Active tab background color (blue) */
+  color: #fff; /* Active tab text color (white) */
+  border-bottom: none; /* Remove bottom border for active tab */
+  border-top-left-radius: 0; /* Maintain rounded corners for active tab */
+  border-top-right-radius: 5px; /* Add rounded corner to active tab */
+}
+
+.tab-content {
+  flex: 1; /* Take up remaining space */
+  padding: 15px; /* Inner content padding */
+  border-radius: 5px; /* Bottom rounded corners for content area */
+  background-color: #fff; /* Content area background color (white) */
+  /* Added styles for positioning below the tabs: */
+  margin-top: 10px; /* Add some space between tabs and content */
+}
+
+/* Custom CSS */
+.table.table-striped.table-bordered.table-hover .table-active {
+  --bs-table-bg-state: rgb(154, 204, 139) !important;
+}
+
+
